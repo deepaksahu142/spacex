@@ -20,11 +20,15 @@ body {
 }
 
 .btn-success {
-  color: #c5e09b;
+  background: #c5e09b;
+  color: black;
 }
 
-.btn-success.active {
-  color: #7abd01;
+.btn-success.focus,
+.btn-success:focus {
+  background: #7abd01;
+  color: black;
+  box-shadow: none;
 }
 
 @media only screen and (min-device-width: 320px) and (max-device-width: 860px) {

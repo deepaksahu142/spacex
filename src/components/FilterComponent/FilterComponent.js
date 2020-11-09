@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import ApiService from "../../api/ApiService";
 import "./FilterComponent.css";
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import userListsAction from "../../redux/actions/userLists.action";
-import {withRouter} from 'react-router-dom';
-import {compose} from "redux";
+import { withRouter } from "react-router-dom";
+import { compose } from "redux";
+
+const queryString = require('query-string');
 
 class FilterComponent extends Component {
   state = {
@@ -29,28 +30,36 @@ class FilterComponent extends Component {
       {
         id: 2010,
         year: 2010,
-      },{
+      },
+      {
         id: 2011,
         year: 2011,
-      },{
+      },
+      {
         id: 2012,
         year: 2012,
-      },{
+      },
+      {
         id: 2013,
         year: 2013,
-      },{
+      },
+      {
         id: 2014,
         year: 2014,
-      },{
+      },
+      {
         id: 2015,
         year: 2015,
-      },{
+      },
+      {
         id: 2016,
         year: 2016,
-      },{
+      },
+      {
         id: 2017,
         year: 2017,
-      },{
+      },
+      {
         id: 2018,
         year: 2018,
       },
@@ -63,91 +72,68 @@ class FilterComponent extends Component {
         year: 2020,
       },
     ],
-    launch_success : [
+    launch_success: [
       {
-        id:true,
-        value:true
+        id: true,
+        value: true,
       },
-      {id:false,
-      value:false}
+      { id: false, value: false },
     ],
-    land_success : [
+    land_success: [
       {
-        id:true,
-        value:true
+        id: true,
+        value: true,
       },
       {
-        id:false,
-      value:false
-      }
+        id: false,
+        value: false,
+      },
     ],
-    
-    filterDdata : [],
-    clicked: false
 
+    filterData: {
+      launch_year: '',
+      launch_success: '',
+      land_success: '',
+    },
+    clicked: false,
   };
-  handleCLick = (field,value) => {
-    let newData;
-    if(field === "year") {
-     // this.props.history.push(`/?&launch_year=${value}`)
 
-     newData = {
-        launch_year:value,
-        filtered:true
-      }  
-      alert(JSON.stringify(newData));
-    }
-
-    if(field === "launch") { 
+  handleCLick = (field, value) => {
+    let newData = this.state.filterData;
+    if (field === "year") {
       newData = {
-        launch_success:value,
-        filtered:true
-      } 
-      alert(JSON.stringify(newData));
+        ...newData,
+        launch_year: value,
+      };
     }
 
-    if(field === "land") { 
+    if (field === "launch") {
       newData = {
-        land_success:value,
-        filtered:true
-      } 
-      alert(JSON.stringify(newData));
+        ...newData,
+        launch_success: value,
+      };
     }
-    
-    this.setState({
-      ...this.state,
-      filterDdata : [...this.state.filterDdata, newData]
-    })
 
-    var datas;
-      setTimeout(() => {
-        alert(JSON.stringify(this.state.filterDdata));
-        
-        
-        if(this.state.filterDdata[0].hasOwnProperty("launch_year") && !this.state.filterDdata[0].hasOwnProperty("launch_success") ) {
-          datas = `${Object.keys(this.state.filterDdata[0])[0]}=${this.state.filterDdata[0].launch_year}`
-        }
-        if( this.state.filterDdata.length > 1 &&  this.state.filterDdata[1].hasOwnProperty("launch_success")) {
-          if(this.state.filterDdata[0].hasOwnProperty("launch_year") && this.state.filterDdata[1].hasOwnProperty("launch_success")) {
-             datas = `${Object.keys(this.state.filterDdata[1])[0]}=${this.state.filterDdata[1].launch_success}&${Object.keys(this.state.filterDdata[0])[0]}=${this.state.filterDdata[0].launch_year}`
-          }
-        }
-        
-
-        if( this.state.filterDdata.length > 2 &&  this.state.filterDdata[1].hasOwnProperty("launch_success") &&  this.state.filterDdata[2].hasOwnProperty("land_success")) {
-          if(this.state.filterDdata[0].hasOwnProperty("launch_year") && this.state.filterDdata[1].hasOwnProperty("launch_success") && this.state.filterDdata[1].hasOwnProperty("land_success")) {
-             datas = `${Object.keys(this.state.filterDdata[2])[0]}=${this.state.filterDdata[2].land_success}&${Object.keys(this.state.filterDdata[1])[0]}=${this.state.filterDdata[1].launch_success}&${Object.keys(this.state.filterDdata[0])[0]}=${this.state.filterDdata[0].launch_year}`
-          }
-        }
-        
-        
-        alert(datas);
-          
-          this.props.filtedData(datas)
-        
-      }, 2000);
-    
-    
+    if (field === "land") {
+      newData = {
+        ...newData,
+        land_success: value,
+      };
+    }
+    const newUrl = JSON.parse(JSON.stringify(newData));
+    if(newUrl.land_success === ''){
+      delete newUrl.land_success;
+    }
+    if(newUrl.launch_success === ''){
+      delete newUrl.launch_success;
+    }
+    if(newUrl.launch_year === ''){
+      delete newUrl.launch_year;
+    }
+    const url = queryString.stringify(newUrl);
+    this.setState({filterData: newData})
+    this.props.history.replace(url);
+    this.props.filtedData(url);
   };
   render() {
     return (
@@ -160,11 +146,10 @@ class FilterComponent extends Component {
           <ul className="d-flex flex-wrap filterlist">
             {this.state.launch_year.map((item) => (
               <li key={item.id}>
-                <button 
-                                className='btn btn-success' 
-
-                
-                onClick={() => this.handleCLick("year",item.id)}>
+                <button
+                  className="btn btn-success"
+                  onClick={() => this.handleCLick("year", item.id)}
+                >
                   {item.year}
                 </button>
               </li>
@@ -174,28 +159,32 @@ class FilterComponent extends Component {
         <div className="listBox">
           <h4>Succesful Launch </h4>
           <ul className="d-flex flex-wrap filterlist ">
-            
-          {this.state.launch_success.map((item) => (
+            {this.state.launch_success.map((item) => (
               <li key={`${item.id}`}>
-                <button className="btn btn-success" onClick={() => this.handleCLick("launch" ,  item.id)}>
+                <button
+                  className="btn btn-success"
+                  onClick={() => this.handleCLick("launch", item.id)}
+                >
                   {`${item.value}`}
                 </button>
               </li>
-            ))}            
+            ))}
           </ul>
         </div>
 
         <div className="listBox">
           <h4>Succesful Landing </h4>
           <ul className="d-flex flex-wrap filterlist">
-          {this.state.land_success.map((item) => (
+            {this.state.land_success.map((item) => (
               <li key={`${item.id}`}>
-                <button className="btn btn-success" onClick={() => this.handleCLick("land" ,  item.id)}>
+                <button
+                  className="btn btn-success"
+                  onClick={() => this.handleCLick("land", item.id)}
+                >
                   {`${item.value}`}
                 </button>
               </li>
-            ))}            
-
+            ))}
           </ul>
         </div>
       </div>
@@ -209,9 +198,7 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-
-export default  compose(
+export default compose(
   withRouter,
   connect(null, mapDispatchToProps)
 )(FilterComponent);
-

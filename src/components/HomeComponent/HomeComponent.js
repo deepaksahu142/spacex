@@ -4,9 +4,6 @@ import FilterComponent from "../FilterComponent/FilterComponent";
 import SpacexListComponent from "../SpacexListComponent/SpacexListComponent";
 
 class HomeComponent extends Component {
-  componentDidMount(){
-    console.log(this.props)
-  }
   render() {
     return (
       <div className="container">
